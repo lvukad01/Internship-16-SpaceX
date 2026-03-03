@@ -1,5 +1,6 @@
 import './App.css'
 import { BrowserRouter as Router, Routes, Route, Link} from 'react-router-dom'
+import { LaunchesPage } from './pages/LaunchesPage'
 
 function App() {
 
@@ -12,7 +13,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<h1>Home - SpaceX Info</h1>} />
-        <Route path="/launches" element={<h1>Launches Page</h1>} />
+        <Route path="/launches" element={<LaunchesPage/>} />
         <Route path="*" element={<h1>404 - Not Found</h1>} />
       </Routes>
     </Router>
