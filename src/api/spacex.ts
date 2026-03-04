@@ -3,9 +3,11 @@ import type { Launch, QueryResponse } from '../types/spacex'
 
 const BASE_URL='https://api.spacexdata.com/v4'
 
-export const fetchLaunches=async(page:number=1):Promise<QueryResponse<Launch>>=>{
+export const fetchLaunches=async(page:number=1,search:string=""):Promise<QueryResponse<Launch>>=>{
     const response=await axios.post(`${BASE_URL}/launches/query`,{
-        query:{},
+        query:{
+            name:{$regex:search, $options:'i'}
+        },
         options:{
             limit:10,
             page:page,

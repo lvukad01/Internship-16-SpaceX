@@ -8,12 +8,13 @@ export const LaunchesPage = () => {
   const [page, setPage] = useState(1);
   
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const getData = async () => {
       setLoading(true);
       try {
-        const result = await fetchLaunches(page);
+        const result = await fetchLaunches(page,search);
         setData(result);
       } catch (error) {
         console.error("Greška:", error);
@@ -23,14 +24,17 @@ export const LaunchesPage = () => {
     };
 
     getData();
-  }, [page]); 
+  }, [page,search]); 
 
   if (loading && !data) return <div>Učitavam...</div>;
 
   return (
     <div style={{ padding: '20px' }}>
       <h1>SpaceX Lansiranja</h1>
-
+      <input type='text' placeholder='Search launches' value={search} onChange={e=>{
+        setSearch(e.target.value)
+        setPage(1)
+      }} />
       <div style={{ display: 'grid', gap: '15px', marginBottom: '20px' }}>
         {data?.docs.map((launch) => (
           <div 
