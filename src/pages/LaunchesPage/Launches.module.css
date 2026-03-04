@@ -1,0 +1,28 @@
+.container {
+  padding: 20px;
+}
+
+.searchInput {
+  padding: 8px 10px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.grid {
+  display: grid;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.card {
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.pagination {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
