@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { fetchLaunches } from '../../api/spacex';
 import type { Launch, QueryResponse } from '../../types/spacex';
 import styles from './Launches.module.css'; 
+import { Link } from 'react-router-dom';
 
 export const LaunchesPage = () => {
   const [data, setData] = useState<QueryResponse<Launch> | null>(null);
@@ -64,9 +65,10 @@ export const LaunchesPage = () => {
           value={status} 
           onChange={handleStatusChange}
         >
-          <option value="all">Svi statusi</option>
-          <option value="success">Uspješno</option>
-          <option value="failed">Neuspješno</option>
+          <option value="all">All</option>
+          <option value="upcoming">Upcoming</option> 
+          <option value="success">Success</option>
+          <option value="failed">Failed</option>
         </select>
       </div>
 
@@ -74,15 +76,26 @@ export const LaunchesPage = () => {
         <div>Učitavam...</div>
       ) : (
         <>
-          <div className={styles.launchesGrid}>
-            {data?.docs.map((launch) => (
-              <div key={launch.id} className={styles.launchCard}>
+        <div className={styles.launchesGrid}>
+          {data?.docs.map((launch) => (
+            <Link 
+              key={launch.id} 
+              to={`/launch/${launch.id}`} 
+              className={styles.cardLink} 
+            >
+              <div className={styles.card}>
                 <h3>{launch.name}</h3>
                 <p>Datum: {new Date(launch.date_utc).toLocaleDateString()}</p>
-                <p>{launch.success ? '✅ Uspješno' : '❌ Neuspješno'}</p>
+                
+                <span className={`${styles.status} ${
+                  launch.upcoming ? styles.upcoming : launch.success ? styles.success : styles.failed
+                }`}>
+                  {launch.upcoming ? "Upcoming" : launch.success ? "Success" : "Failed"}
+                </span>
               </div>
-            ))}
-          </div>
+            </Link>
+          ))}
+        </div>
 
           <div className={styles.paginationControls}>
             <button 
