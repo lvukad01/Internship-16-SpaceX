@@ -27,3 +27,8 @@ export interface Launch {
   };
   rocket: string; 
 }
+
+export interface Rocket{
+    id:string,
+    name:string
+}

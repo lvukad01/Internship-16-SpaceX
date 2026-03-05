@@ -49,13 +49,13 @@ export const LaunchesPage = () => {
 
   return (
     <div className={styles.launchesContainer}>
-      <h1>SpaceX Lansiranja</h1>
+      <h1>SpaceX Launches</h1>
       
       <div className={styles.searchSection}>
         <input 
           className={styles.searchInput}
           type="text" 
-          placeholder="Pretraži misije..." 
+          placeholder="Search missions..." 
           value={inputValue} 
           onChange={handleSearch}
         />
@@ -73,7 +73,7 @@ export const LaunchesPage = () => {
       </div>
 
       {loading && !data ? (
-        <div>Učitavam...</div>
+        <div>Loading...</div>
       ) : (
         <>
         <div className={styles.launchesGrid}>
@@ -113,7 +113,7 @@ export const LaunchesPage = () => {
               disabled={!data?.hasNextPage || loading} 
               onClick={() => setSearchParams({ search, status, page: (page + 1).toString() })}
             >
-              Sljedeća
+              Next
             </button>
           </div>
         </>
