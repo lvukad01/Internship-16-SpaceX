@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { Launch, QueryResponse, Rocket } from '../types/spacex'
+import type { Launch, QueryResponse, Rocket, Ship } from '../types/spacex'
 
 const BASE_URL='https://api.spacexdata.com/v4'
 
@@ -37,4 +37,15 @@ export const fetchLaunchById = async (id: string): Promise<Launch> => {
 export const fetchRocketById=async (rocketid: string): Promise<Rocket> => {
   const response = await axios.get(`${BASE_URL}/rockets/${rocketid}`);
   return response.data;
+};
+
+export const fetchShips=async(page:number):Promise<QueryResponse<Ship>>=>{
+    const response=await axios.post(`${BASE_URL}/ships/query`,{
+        query: {},
+        options: {
+        limit: 10,
+        page: page,
+    }
+    })
+    return response.data;
 };

@@ -32,3 +32,10 @@ export interface Rocket{
     id:string,
     name:string
 }
+export interface Ship{
+  id: string;
+  name: string;
+  home_port: string;
+  image: string | null;
+  active: boolean;
+}
