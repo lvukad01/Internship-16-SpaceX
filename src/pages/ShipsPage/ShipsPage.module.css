@@ -1,9 +1,9 @@
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 25px;
-  padding: 20px 0;
+.container {
+  max-width: 1200px;
+  margin: 0 0;
+  padding: 20px;
 }
+
 
 .card {
   border: 1px solid #eee;
@@ -13,13 +13,47 @@
   transition: transform 0.2s;
 }
 
+.card:hover {
+  transform: translateY(-5px);
+}
+
 .imageContainer img {
-  width: 100%;
+  width: 400px;
   height: 200px;
   object-fit: cover;
 }
 
-.info { padding: 15px; }
+.info {
+  padding: 15px;
+}
 
-.active { color: green; font-weight: bold; }
-.inactive { color: red; }
+.active {
+  color: green;
+  font-weight: bold;
+}
+
+.inactive {
+  color: red;
+}
+
+.loader {
+  text-align: center;
+  padding: 30px;
+  font-size: 18px;
+}
+
+.end {
+  text-align: center;
+  padding: 30px;
+  color: gray;
+}
+
+.grid {
+  display: grid;
+  gap: 25px;
+  padding: 20px 0;
+  scrollbar-gutter: stable;
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 25px;
+  padding: 20px 0;
+}

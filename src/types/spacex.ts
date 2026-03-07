@@ -38,4 +38,5 @@ export interface Ship{
   home_port: string;
   image: string | null;
   active: boolean;
+  type: string;
 }
