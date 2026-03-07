@@ -39,9 +39,11 @@ export const fetchRocketById=async (rocketid: string): Promise<Rocket> => {
   return response.data;
 };
 
-export const fetchShips=async(page:number):Promise<QueryResponse<Ship>>=>{
+export const fetchShips=async(page:number,search:string=""):Promise<QueryResponse<Ship>>=>{
     const response=await axios.post(`${BASE_URL}/ships/query`,{
-        query: {},
+        query: {
+          name: { $regex: search, $options: 'i' }
+        },
         options: {
         limit: 10,
         page: page,
