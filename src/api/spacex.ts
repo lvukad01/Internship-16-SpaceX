@@ -51,3 +51,8 @@ export const fetchShips=async(page:number,search:string=""):Promise<QueryRespons
     })
     return response.data;
 };
+
+export const fetchShipById = async (id: string): Promise<Ship> => {
+  const response = await axios.get(`${BASE_URL}/ships/${id}`);
+  return response.data;
+};

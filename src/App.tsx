@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link} from 'react-router-dom'
 import { LaunchesPage } from './pages/LaunchesPage/LaunchesPage'
 import {LaunchDetails} from './pages/LaunchDetails/LaunchDetails'
 import { ShipsPage } from './pages/ShipsPage/ShipsPage'
+import {ShipDetails} from './pages/ShipDetailsPage/ShipDetails'
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
         <Route path="/launches" element={<LaunchesPage/>} />
         <Route path="/launch/:id" element={<LaunchDetails/>}/>
         <Route path="/ships" element={<ShipsPage/>}/>
+        <Route path="/ships/:id" element={<ShipDetails/>}/>
         <Route path="*" element={<h1>404 - Not Found</h1>} />
       </Routes>
     </Router>

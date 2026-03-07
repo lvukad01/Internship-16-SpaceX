@@ -39,4 +39,9 @@ export interface Ship{
   image: string | null;
   active: boolean;
   type: string;
+  year_built: number | null; 
+  weight_kg: number | null;  
+  launches: string[];  
+  roles: string[];     
+  link: string | null;
 }

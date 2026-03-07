@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import styles from "./ShipsPage.module.css";
 import { fetchShips } from "../../api/spacex";
 import type { Ship } from "../../types/spacex";
+import { Link } from 'react-router-dom';
 
 export const ShipsPage = () => {
   const [ships, setShips] = useState<Ship[]>([]);
@@ -85,7 +86,7 @@ export const ShipsPage = () => {
 
   return (
     <div className={styles.container}>
-      <h1>SpaceX Fleet</h1>
+      <h1>SpaceX Ships</h1>
       
       <input
         className={styles.searchInput}
@@ -97,22 +98,24 @@ export const ShipsPage = () => {
 
       <div className={styles.grid}>
         {ships.map((ship) => (
-          <div key={ship.id} className={styles.card}>
-            <div className={styles.imageContainer}>
-              <img
-                src={ship.image || "https://placehold.co/400x300?text=No+Image"}
-                alt={ship.name}
-              />
-            </div>
-            <div className={styles.info}>
-              <h3>{ship.name}</h3>
-              <p>Type: {ship.type || "Unknown"}</p>
-              <p>Port: {ship.home_port || "Unknown"}</p>
-              <span className={ship.active ? styles.active : styles.inactive}>
-                {ship.active ? "● Active" : "○ Inactive"}
-              </span>
-            </div>
-          </div>
+<Link to={`/ships/${ship.id}`} key={ship.id} className={styles.cardLink}>
+      <div className={styles.card}>
+        <div className={styles.imageContainer}>
+          <img
+            src={ship.image || "https://placehold.co/400x300?text=No+Image"}
+            alt={ship.name}
+          />
+        </div>
+        <div className={styles.info}>
+          <h3>{ship.name}</h3>
+          <p>Type: {ship.type || "Unknown"}</p>
+          <p>Port: {ship.home_port || "Unknown"}</p>
+          <span className={ship.active ? styles.active : styles.inactive}>
+            {ship.active ? "● Active" : "○ Inactive"}
+          </span>
+        </div>
+      </div>
+    </Link>
         ))}
       </div>
 
