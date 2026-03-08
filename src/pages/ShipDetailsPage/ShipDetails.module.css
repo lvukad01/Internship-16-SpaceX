@@ -1,7 +1,7 @@
 .container {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 100px 20px 40px 20px; /* Padding zbog Navbara */
+  padding: 100px 20px 40px 20px; 
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--bg-primary);
   color: var(--text-main);
@@ -30,7 +30,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 40px;
-  background: var(--card-bg); /* OVO se mijenja */
+  background: var(--card-bg); 
   border: 1px solid var(--border-color);
   border-radius: 15px;
   overflow: hidden;

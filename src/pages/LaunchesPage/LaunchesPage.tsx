@@ -23,7 +23,7 @@ const LaunchesPageBase = ({ data, page }: Props) => {
     if (debouncedSearch !== search) {
       setSearchParams({ search: debouncedSearch, status, page: '1' });
     }
-  }, [debouncedSearch]);
+  }, [debouncedSearch, search, status, setSearchParams]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -134,6 +134,10 @@ export const LaunchesPage = () => {
   const page = Number(searchParams.get('page')) || 1;
   const search = searchParams.get('search') || '';
   const status = searchParams.get('status') || 'all';
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [page]);
 
   useEffect(() => {
     const getData = async () => {
