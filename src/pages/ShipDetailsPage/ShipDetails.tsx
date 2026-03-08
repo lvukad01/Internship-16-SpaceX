@@ -5,29 +5,13 @@ import type { Ship, Launch } from '../../types/spacex';
 import { withLoading } from '../../hoc/withLoading';
 import styles from './ShipDetails.module.css';
 
-const ShipDetailsBase = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  
-  const [ship, setShip] = useState<Ship | null>(null);
-  const [launches, setLaunches] = useState<Launch[]>([]);
+interface Props {
+  ship: Ship | null;
+  launches: Launch[];
+}
 
-  useEffect(() => {
-    const getFullDetails = async () => {
-      if (!id) return;
-      try {
-        const shipData = await fetchShipById(id);
-        setShip(shipData);
-        if (shipData.launches && shipData.launches.length > 0) {
-          const launchesData = await fetchLaunchesByIds(shipData.launches);
-          setLaunches(launchesData);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    getFullDetails();
-  }, [id]);
+const ShipDetailsBase = ({ ship, launches }: Props) => {
+  const navigate = useNavigate();
 
   if (!ship) return <div className={styles.errorContainer}><h2>Ship not found</h2></div>;
 
@@ -72,12 +56,30 @@ const ShipDetailsBase = () => {
 const ShipDetailsWithHOC = withLoading(ShipDetailsBase);
 
 export const ShipDetails = () => {
+  const { id } = useParams<{ id: string }>();
+  const [ship, setShip] = useState<Ship | null>(null);
+  const [launches, setLaunches] = useState<Launch[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, []);
+    const getFullDetails = async () => {
+      if (!id) return;
+      setIsLoading(true);
+      try {
+        const shipData = await fetchShipById(id);
+        setShip(shipData);
+        if (shipData.launches && shipData.launches.length > 0) {
+          const launchesData = await fetchLaunchesByIds(shipData.launches);
+          setLaunches(launchesData);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    getFullDetails();
+  }, [id]);
 
-  return <ShipDetailsWithHOC isLoading={isLoading} />;
+  return <ShipDetailsWithHOC isLoading={isLoading} ship={ship} launches={launches} />;
 };

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fetchCompany, fetchNextLaunch } from '../../api/spacex';
+import { fetchCompany, fetchLaunches } from '../../api/spacex';
 import type { Launch } from '../../types/spacex';
 import styles from './HomePage.module.css';
 
@@ -29,12 +29,13 @@ export const HomePage = () => {
   useEffect(() => {
     const loadHomeData = async () => {
       try {
-        const [companyData, launchData] = await Promise.all([
-          fetchCompany(),
-          fetchNextLaunch()
-        ]);
+        const companyData = await fetchCompany();
         setCompany(companyData);
-        setNextLaunch(launchData);
+
+        const launches = await fetchLaunches(1, '', 'upcoming');
+        if (launches.docs && launches.docs.length > 0) {
+          setNextLaunch(launches.docs[0]);
+        }
       } catch (error) {
         console.error("Error loading home page data:", error);
       }
@@ -45,12 +46,14 @@ export const HomePage = () => {
   useEffect(() => {
     if (!nextLaunch) return;
 
+    const target = new Date(nextLaunch.date_utc).getTime();
+
     const interval = setInterval(() => {
       const now = new Date().getTime();
-      const launchTime = new Date(nextLaunch.date_utc).getTime();
-      const diff = launchTime - now;
+      const diff = target - now;
 
       if (diff <= 0) {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
         clearInterval(interval);
       } else {
         setTimeLeft({
@@ -75,15 +78,14 @@ export const HomePage = () => {
             playsInline 
             className={styles.backgroundVideo}
         >
-            <source src="src\assets\video\4K Planet Earth Spinning in Space _ Free HD Videos - No Copyright.mp4" type="video/mp4" />
+            <source src="src/assets/video/4K Planet Earth Spinning in Space _ Free HD Videos - No Copyright.mp4" type="video/mp4" />
             Your browser does not support the video tag.
         </video>
         
         <div className={styles.heroContent}>
-
           <h1>SPACEX</h1>
           <div className={styles.countdownBox}>
-            <h2>Upcoming Mission: {nextLaunch?.name}</h2>
+            <h2>Upcoming Mission: {nextLaunch?.name || "Loading..."}</h2>
             <div className={styles.timer}>
               <div className={styles.timerItem}>
                 {timeLeft.days}<span>Days</span>

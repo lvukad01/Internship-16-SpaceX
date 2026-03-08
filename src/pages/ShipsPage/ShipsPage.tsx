@@ -3,34 +3,40 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { fetchShips } from "../../api/spacex";
 import type { Ship } from "../../types/spacex";
 import { withLoading } from '../../hoc/withLoading';
+import { useDebounce } from '../../hooks/useDebounce';
 import styles from "./ShipsPage.module.css";
 
-const ShipsPageBase = () => {
-  const [ships, setShips] = useState<Ship[]>([]);
+const ShipsPageBase = ({ initialShips }: { initialShips: Ship[] }) => {
+  const [ships, setShips] = useState<Ship[]>(initialShips);
   const [fetching, setFetching] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(true);
-
-  const pageRef = useRef(1);
-  const fetchingRef = useRef(false);
-  const hasNextPageRef = useRef(true);
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get('search') || '';
   const [inputValue, setInputValue] = useState(search);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const debouncedSearch = useDebounce(inputValue, 500);
 
-  const loadMore = useCallback(async (isNewSearch = false) => {
-    if (fetchingRef.current || (!hasNextPageRef.current && !isNewSearch)) return;
+  const pageRef = useRef(2);
+  const fetchingRef = useRef(false);
+  const hasNextPageRef = useRef(true);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setShips(initialShips);
+    pageRef.current = 2;
+    hasNextPageRef.current = true;
+    setHasNextPage(true);
+  }, [initialShips]);
+
+  const loadMore = useCallback(async () => {
+    if (fetchingRef.current || !hasNextPageRef.current) return;
 
     fetchingRef.current = true;
     setFetching(true);
-    const pageToLoad = isNewSearch ? 1 : pageRef.current;
 
     try {
-      const data = await fetchShips(pageToLoad, search);
+      const data = await fetchShips(pageRef.current, debouncedSearch);
       setShips(prev => {
-        if (pageToLoad === 1) return data.docs;
         const ids = new Set(prev.map(s => s.id));
         const newUnique = data.docs.filter(s => !ids.has(s.id));
         return [...prev, ...newUnique];
@@ -38,16 +44,18 @@ const ShipsPageBase = () => {
 
       hasNextPageRef.current = data.hasNextPage;
       setHasNextPage(data.hasNextPage);
-      if (data.hasNextPage) pageRef.current = pageToLoad + 1;
+      if (data.hasNextPage) pageRef.current += 1;
     } catch (err) {
       console.error(err);
     } finally {
       setFetching(false);
       fetchingRef.current = false;
     }
-  }, [search]);
+  }, [debouncedSearch]);
 
-  useEffect(() => { loadMore(true); }, [search, loadMore]);
+  useEffect(() => {
+    setSearchParams({ search: debouncedSearch });
+  }, [debouncedSearch, setSearchParams]);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -64,38 +72,26 @@ const ShipsPageBase = () => {
     return () => observer.disconnect();
   }, [loadMore]);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setInputValue(value);
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      setSearchParams({ search: value });
-    }, 500);
-  };
-
   return (
     <div className={styles.container}>
-      <h1>SpaceX Ships</h1>
+      <h1>SpaceX Fleet</h1>
       <input
         className={styles.searchInput}
         type="text"
         placeholder="Search ships..."
         value={inputValue}
-        onChange={handleSearch}
+        onChange={(e) => setInputValue(e.target.value)}
       />
       <div className={styles.grid}>
         {ships.map((ship) => (
           <Link to={`/ship/${ship.id}`} key={ship.id} className={styles.cardLink}>
             <div className={styles.card}>
               <div className={styles.imageContainer}>
-                <img
-                  src={ship.image || "https://placehold.co/400x300?text=No+Image"}
-                  alt={ship.name}
-                />
+                <img src={ship.image || "https://placehold.co/400x300?text=No+Image"} alt={ship.name} />
               </div>
               <div className={styles.info}>
                 <h3>{ship.name}</h3>
-                <p>Type: {ship.type || "Unknown"}</p>
+                <p>{ship.type}</p>
                 <span className={ship.active ? styles.active : styles.inactive}>
                   {ship.active ? "● Active" : "○ Inactive"}
                 </span>
@@ -105,9 +101,8 @@ const ShipsPageBase = () => {
         ))}
       </div>
       <div ref={sentinelRef} style={{ height: '10px' }} />
-      {!hasNextPage && ships.length > 0 && (
-        <div className={styles.end}>No more ships 🚢</div>
-      )}
+      {fetching && <div className={styles.loader}>Loading more...</div>}
+      {!hasNextPage && <div className={styles.end}>No more ships 🚢</div>}
     </div>
   );
 };
@@ -115,10 +110,25 @@ const ShipsPageBase = () => {
 const ShipsWithHOC = withLoading(ShipsPageBase);
 
 export const ShipsPage = () => {
-  const [initialLoading, setInitialLoading] = useState(true);
+  const [initialShips, setInitialShips] = useState<Ship[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchParams] = useSearchParams();
+  const search = searchParams.get('search') || '';
+
   useEffect(() => {
-    const timer = setTimeout(() => setInitialLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, []);
-  return <ShipsWithHOC isLoading={initialLoading} />;
+    const getInitialData = async () => {
+      setIsLoading(true);
+      try {
+        const data = await fetchShips(1, search);
+        setInitialShips(data.docs);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    getInitialData();
+  }, [search]);
+
+  return <ShipsWithHOC isLoading={isLoading} initialShips={initialShips} />;
 };

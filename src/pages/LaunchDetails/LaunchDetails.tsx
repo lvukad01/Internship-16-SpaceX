@@ -13,38 +13,34 @@ const LaunchDetailsBase = () => {
 
   useEffect(() => {
     if (id) {
-      fetchLaunchById(id).then(setLaunch).catch(console.error);
+      fetchLaunchById(id).then(launchData => {
+        setLaunch(launchData);
+        if (launchData.rocket) {
+          fetchRocketById(launchData.rocket).then(setRocket);
+        }
+      });
     }
   }, [id]);
-
-  useEffect(() => {
-    if (launch?.rocket) {
-      fetchRocketById(launch.rocket).then(setRocket).catch(console.error);
-    }
-  }, [launch]);
 
   if (!launch) return <div className={styles.error}>Launch not found.</div>;
 
   return (
     <div className={styles.container}>
       <button onClick={() => navigate(-1)} className={styles.backBtn}>← Back</button>
-      
       <header className={styles.header}>
         {launch.links.patch.small && (
-            <img src={launch.links.patch.small} alt={launch.name} className={styles.patch} />
+          <img src={launch.links.patch.small} alt={launch.name} className={styles.patch} />
         )}
         <div className={styles.headerText}>
-            <h1>{launch.name}</h1>
-            <h2>Rocket: {rocket?.name || "Loading..."}</h2>
+          <h1>{launch.name}</h1>
+          <h2>Rocket: {rocket?.name || "Loading..."}</h2>
         </div>
       </header>
-
       <section className={styles.content}>
         <div className={styles.descriptionCard}>
-            <h3>Mission Details</h3>
-            <p>{launch.details || "No details available for this mission."}</p>
+          <h3>Mission Details</h3>
+          <p>{launch.details || "No details available for this mission."}</p>
         </div>
-
         {launch.links.youtube_id && (
           <div className={styles.videoWrapper}>
             <iframe
@@ -63,10 +59,15 @@ const LaunchDetailsBase = () => {
 const LaunchWithHOC = withLoading(LaunchDetailsBase);
 
 export const LaunchDetails = () => {
-  const [initialLoading, setInitialLoading] = useState(true);
+  const { id } = useParams<{ id: string }>();
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    const timer = setTimeout(() => setInitialLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, []);
-  return <LaunchWithHOC isLoading={initialLoading} />;
+    if (id) {
+      setIsLoading(true);
+      fetchLaunchById(id).finally(() => setIsLoading(false));
+    }
+  }, [id]);
+
+  return <LaunchWithHOC isLoading={isLoading} />;
 };

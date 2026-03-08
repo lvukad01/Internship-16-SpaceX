@@ -17,10 +17,10 @@ function App() {
         <main>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/launches" element={<LaunchesPage isLoading={false} />} />
+            <Route path="/launches" element={<LaunchesPage />} />
             <Route path="/launch/:id" element={<LaunchDetails />} />
             <Route path="/ships" element={<ShipsPage />} />
-            <Route path="/ships/:id" element={<ShipDetails />} />
+            <Route path="/ship/:id" element={<ShipDetails />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

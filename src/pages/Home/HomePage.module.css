@@ -2,6 +2,7 @@
   position: relative;
   min-height: 100vh;
   color: white;
+  padding-top: 50px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   overflow-x: hidden;
 }
