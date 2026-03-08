@@ -20,7 +20,9 @@ const LaunchesPageBase = ({ data, page }: Props) => {
   const debouncedSearch = useDebounce(inputValue, 500);
 
   useEffect(() => {
-    setSearchParams({ search: debouncedSearch, status, page: '1' });
+    if (debouncedSearch !== search) {
+      setSearchParams({ search: debouncedSearch, status, page: '1' });
+    }
   }, [debouncedSearch]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,6 +31,10 @@ const LaunchesPageBase = ({ data, page }: Props) => {
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSearchParams({ search: inputValue, status: e.target.value, page: '1' });
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setSearchParams({ search, status, page: newPage.toString() });
   };
 
   return (
@@ -101,7 +107,7 @@ const LaunchesPageBase = ({ data, page }: Props) => {
         <button
           className={styles.paginationButton}
           disabled={!data?.hasPrevPage}
-          onClick={() => setSearchParams({ search: inputValue, status, page: (page - 1).toString() })}
+          onClick={() => handlePageChange(page - 1)}
         >
           Before
         </button>
@@ -109,7 +115,7 @@ const LaunchesPageBase = ({ data, page }: Props) => {
         <button
           className={styles.paginationButton}
           disabled={!data?.hasNextPage}
-          onClick={() => setSearchParams({ search: inputValue, status, page: (page + 1).toString() })}
+          onClick={() => handlePageChange(page + 1)}
         >
           Next
         </button>

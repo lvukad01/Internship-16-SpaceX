@@ -24,9 +24,16 @@ const ShipsPageBase = ({ initialShips }: { initialShips: Ship[] }) => {
   useEffect(() => {
     setShips(initialShips);
     pageRef.current = 2;
-    hasNextPageRef.current = true;
-    setHasNextPage(true);
+    hasNextPageRef.current = initialShips.length >= 10; 
+    setHasNextPage(initialShips.length >= 10);
+    window.scrollTo(0, 0);
   }, [initialShips]);
+
+  useEffect(() => {
+    if (debouncedSearch !== search) {
+      setSearchParams({ search: debouncedSearch });
+    }
+  }, [debouncedSearch, search, setSearchParams]);
 
   const loadMore = useCallback(async () => {
     if (fetchingRef.current || !hasNextPageRef.current) return;
@@ -35,7 +42,7 @@ const ShipsPageBase = ({ initialShips }: { initialShips: Ship[] }) => {
     setFetching(true);
 
     try {
-      const data = await fetchShips(pageRef.current, debouncedSearch);
+      const data = await fetchShips(pageRef.current, search);
       setShips(prev => {
         const ids = new Set(prev.map(s => s.id));
         const newUnique = data.docs.filter(s => !ids.has(s.id));
@@ -51,23 +58,21 @@ const ShipsPageBase = ({ initialShips }: { initialShips: Ship[] }) => {
       setFetching(false);
       fetchingRef.current = false;
     }
-  }, [debouncedSearch]);
-
-  useEffect(() => {
-    setSearchParams({ search: debouncedSearch });
-  }, [debouncedSearch, setSearchParams]);
+  }, [search]);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
+
     const observer = new IntersectionObserver(
       entries => {
-        if (entries[0].isIntersecting && !fetchingRef.current) {
+        if (entries[0].isIntersecting) {
           loadMore();
         }
       },
       { rootMargin: '300px' }
     );
+
     observer.observe(sentinel);
     return () => observer.disconnect();
   }, [loadMore]);
@@ -100,9 +105,9 @@ const ShipsPageBase = ({ initialShips }: { initialShips: Ship[] }) => {
           </Link>
         ))}
       </div>
-      <div ref={sentinelRef} style={{ height: '10px' }} />
+      <div ref={sentinelRef} style={{ height: '20px' }} />
       {fetching && <div className={styles.loader}>Loading more...</div>}
-      {!hasNextPage && <div className={styles.end}>No more ships 🚢</div>}
+      {!hasNextPage && ships.length > 0 && <div className={styles.end}>No more ships 🚢</div>}
     </div>
   );
 };
