@@ -2,46 +2,48 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchLaunchById, fetchRocketById } from '../../api/spacex';
 import type { Launch, Rocket } from '../../types/spacex';
+import { withLoading } from '../../hoc/withLoading';
 import styles from './LaunchDetails.module.css';
 
-export const LaunchDetails = () => {
+const LaunchDetailsBase = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [launch, setLaunch] = useState<Launch | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [rocket,setRocket]=useState<Rocket|null>(null)
+  const [rocket, setRocket] = useState<Rocket | null>(null);
 
   useEffect(() => {
     if (id) {
-      fetchLaunchById(id)
-        .then(setLaunch)
-        .finally(() => setLoading(false));
+      fetchLaunchById(id).then(setLaunch).catch(console.error);
     }
   }, [id]);
-  useEffect(()=>{
-    if(launch?.rocket){
-        fetchRocketById(launch.rocket)
-            .then(setRocket)
-    }
-  },[launch])
 
-  if (loading) return <div className={styles.loader}>Loading details...</div>;
-  if (!launch) return <div>Launch not found.</div>;
+  useEffect(() => {
+    if (launch?.rocket) {
+      fetchRocketById(launch.rocket).then(setRocket).catch(console.error);
+    }
+  }, [launch]);
+
+  if (!launch) return <div className={styles.error}>Launch not found.</div>;
 
   return (
     <div className={styles.container}>
       <button onClick={() => navigate(-1)} className={styles.backBtn}>← Back</button>
       
       <header className={styles.header}>
-        <img src={launch.links.patch.small||""} alt={launch.name} className={styles.patch} />
-        <h1>{launch.name}</h1>
-        <h2>{rocket?.name}</h2>
+        {launch.links.patch.small && (
+            <img src={launch.links.patch.small} alt={launch.name} className={styles.patch} />
+        )}
+        <div className={styles.headerText}>
+            <h1>{launch.name}</h1>
+            <h2>Rocket: {rocket?.name || "Loading..."}</h2>
+        </div>
       </header>
 
       <section className={styles.content}>
-        <p className={styles.description}>
-          {launch.details || "No details available."}
-        </p>
+        <div className={styles.descriptionCard}>
+            <h3>Mission Details</h3>
+            <p>{launch.details || "No details available for this mission."}</p>
+        </div>
 
         {launch.links.youtube_id && (
           <div className={styles.videoWrapper}>
@@ -56,4 +58,15 @@ export const LaunchDetails = () => {
       </section>
     </div>
   );
+};
+
+const LaunchWithHOC = withLoading(LaunchDetailsBase);
+
+export const LaunchDetails = () => {
+  const [initialLoading, setInitialLoading] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setInitialLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
+  return <LaunchWithHOC isLoading={initialLoading} />;
 };

@@ -1,13 +1,13 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import { useSearchParams } from 'react-router-dom';
-import styles from "./ShipsPage.module.css";
+import { useSearchParams, Link } from 'react-router-dom';
 import { fetchShips } from "../../api/spacex";
 import type { Ship } from "../../types/spacex";
-import { Link } from 'react-router-dom';
+import { withLoading } from '../../hoc/withLoading';
+import styles from "./ShipsPage.module.css";
 
-export const ShipsPage = () => {
+const ShipsPageBase = () => {
   const [ships, setShips] = useState<Ship[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(true);
 
   const pageRef = useRef(1);
@@ -24,13 +24,11 @@ export const ShipsPage = () => {
     if (fetchingRef.current || (!hasNextPageRef.current && !isNewSearch)) return;
 
     fetchingRef.current = true;
-    setLoading(true);
-
+    setFetching(true);
     const pageToLoad = isNewSearch ? 1 : pageRef.current;
 
     try {
       const data = await fetchShips(pageToLoad, search);
-
       setShips(prev => {
         if (pageToLoad === 1) return data.docs;
         const ids = new Set(prev.map(s => s.id));
@@ -40,26 +38,20 @@ export const ShipsPage = () => {
 
       hasNextPageRef.current = data.hasNextPage;
       setHasNextPage(data.hasNextPage);
-
-      if (data.hasNextPage) {
-        pageRef.current = pageToLoad + 1;
-      }
+      if (data.hasNextPage) pageRef.current = pageToLoad + 1;
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      setFetching(false);
       fetchingRef.current = false;
     }
   }, [search]);
 
-  useEffect(() => {
-    loadMore(true);
-  }, [search, loadMore]);
+  useEffect(() => { loadMore(true); }, [search, loadMore]);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
-
     const observer = new IntersectionObserver(
       entries => {
         if (entries[0].isIntersecting && !fetchingRef.current) {
@@ -68,7 +60,6 @@ export const ShipsPage = () => {
       },
       { rootMargin: '300px' }
     );
-
     observer.observe(sentinel);
     return () => observer.disconnect();
   }, [loadMore]);
@@ -76,9 +67,7 @@ export const ShipsPage = () => {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
-
     if (debounceRef.current) clearTimeout(debounceRef.current);
-
     debounceRef.current = setTimeout(() => {
       setSearchParams({ search: value });
     }, 500);
@@ -87,7 +76,6 @@ export const ShipsPage = () => {
   return (
     <div className={styles.container}>
       <h1>SpaceX Ships</h1>
-      
       <input
         className={styles.searchInput}
         type="text"
@@ -95,39 +83,42 @@ export const ShipsPage = () => {
         value={inputValue}
         onChange={handleSearch}
       />
-
       <div className={styles.grid}>
         {ships.map((ship) => (
-<Link to={`/ships/${ship.id}`} key={ship.id} className={styles.cardLink}>
-      <div className={styles.card}>
-        <div className={styles.imageContainer}>
-          <img
-            src={ship.image || "https://placehold.co/400x300?text=No+Image"}
-            alt={ship.name}
-          />
-        </div>
-        <div className={styles.info}>
-          <h3>{ship.name}</h3>
-          <p>Type: {ship.type || "Unknown"}</p>
-          <p>Port: {ship.home_port || "Unknown"}</p>
-          <span className={ship.active ? styles.active : styles.inactive}>
-            {ship.active ? "● Active" : "○ Inactive"}
-          </span>
-        </div>
-      </div>
-    </Link>
+          <Link to={`/ship/${ship.id}`} key={ship.id} className={styles.cardLink}>
+            <div className={styles.card}>
+              <div className={styles.imageContainer}>
+                <img
+                  src={ship.image || "https://placehold.co/400x300?text=No+Image"}
+                  alt={ship.name}
+                />
+              </div>
+              <div className={styles.info}>
+                <h3>{ship.name}</h3>
+                <p>Type: {ship.type || "Unknown"}</p>
+                <span className={ship.active ? styles.active : styles.inactive}>
+                  {ship.active ? "● Active" : "○ Inactive"}
+                </span>
+              </div>
+            </div>
+          </Link>
         ))}
       </div>
-
       <div ref={sentinelRef} style={{ height: '10px' }} />
-
-      {loading && (
-        <div className={styles.loader}>Loading ships...</div>
-      )}
-
       {!hasNextPage && ships.length > 0 && (
         <div className={styles.end}>No more ships 🚢</div>
       )}
     </div>
   );
+};
+
+const ShipsWithHOC = withLoading(ShipsPageBase);
+
+export const ShipsPage = () => {
+  const [initialLoading, setInitialLoading] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setInitialLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
+  return <ShipsWithHOC isLoading={initialLoading} />;
 };
