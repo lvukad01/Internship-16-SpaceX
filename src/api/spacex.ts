@@ -56,3 +56,25 @@ export const fetchShipById = async (id: string): Promise<Ship> => {
   const response = await axios.get(`${BASE_URL}/ships/${id}`);
   return response.data;
 };
+
+export const fetchLaunchesByIds = async (ids: string[]): Promise<Launch[]> => {
+    const response = await axios.post(`${BASE_URL}/launches/query`, {
+        query: {
+            _id: { $in: ids }
+        },
+        options: {
+            pagination: false 
+        }
+    });
+    return response.data.docs;
+};
+
+export const fetchCompany = async (): Promise<any> => {
+    const response = await axios.get(`${BASE_URL}/company`);
+    return response.data;
+};
+
+export const fetchNextLaunch = async (): Promise<Launch> => {
+    const response = await axios.get(`${BASE_URL}/launches/next`);
+    return response.data;
+};

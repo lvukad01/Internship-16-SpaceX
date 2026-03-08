@@ -1,0 +1,135 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  background: rgba(0, 0, 0, 0.7); 
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  
+  display: flex;
+  align-items: center;
+  z-index: 1000; 
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background 0.3s ease;
+}
+
+.navContainer {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  color: white;
+  text-decoration: none;
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  transition: opacity 0.2s;
+}
+
+.logo span {
+  font-weight: 300;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  color: #aaa;
+  margin-left: 5px;
+}
+
+.logo:hover {
+  opacity: 0.8;
+}
+
+.navLinks {
+  display: flex;
+  gap: 35px;
+  align-items: center;
+}
+
+.link {
+  color: #eee;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 5px 0;
+}
+
+.link:hover {
+  color: white;
+}
+
+.link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: white;
+  transition: width 0.3s ease;
+}
+
+.link:hover::after, 
+.active::after {
+  width: 100%;
+}
+
+.active {
+  color: white !important;
+}
+
+.themeToggle {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  margin-left: 10px;
+}
+
+.themeToggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(15deg);
+}
+
+@media (max-width: 768px) {
+  .navContainer {
+    padding: 0 20px;
+  }
+  
+  .logo {
+    font-size: 1.2rem;
+    letter-spacing: 3px;
+  }
+  
+  .logo span {
+    display: none; 
+  }
+
+  .navLinks {
+    gap: 15px;
+  }
+
+  .link {
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+  }
+}

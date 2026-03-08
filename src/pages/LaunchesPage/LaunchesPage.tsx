@@ -103,10 +103,10 @@ export const LaunchesPage = () => {
               disabled={!data?.hasPrevPage || loading} 
               onClick={() => setSearchParams({ search, status, page: (page - 1).toString() })}
             >
-              Prethodna
+              Before
             </button>
 
-            <span>Stranica {data?.page} od {data?.totalPages}</span>
+            <span>Page {data?.page} of {data?.totalPages}</span>
 
             <button 
               className={styles.paginationButton}

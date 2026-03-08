@@ -1,0 +1,139 @@
+.homeContainer {
+  position: relative;
+  min-height: 100vh;
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden;
+}
+
+.heroSection {
+  position: relative;
+  height: 80vh; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: black; 
+}
+
+.backgroundVideo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  opacity: 0.6; 
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+  padding: 0 20px;
+}
+
+.heroContent h1 {
+  font-size: 4rem;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.countdownBox {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 30px;
+  border-radius: 15px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-top: 20px;
+}
+
+.countdownBox h2 {
+  font-size: 1.2rem;
+  color: #ccc;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+}
+
+.timer {
+  display: flex;
+  gap: 20px;
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.timerItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.timerItem span {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #888;
+}
+
+.companySection {
+  background: white;
+  color: #1a1a1a;
+  padding: 80px 20px;
+}
+
+.companyContent {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.companyContent h2 {
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+}
+
+.summary {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: #444;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  margin-top: 50px;
+}
+
+.statCard {
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 10px;
+}
+
+.statCard h4 {
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.statCard p {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #005288;
+}
+
+@media (max-width: 768px) {
+  .heroContent h1 {
+    font-size: 2.5rem;
+  }
+  
+  .timer {
+    font-size: 1.5rem;
+    gap: 10px;
+  }
+
+  .companySection {
+    padding: 40px 20px;
+  }
+}

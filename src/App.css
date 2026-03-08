@@ -40,3 +40,103 @@
 .read-the-docs {
   color: #888;
 }
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  background: rgba(0, 0, 0, 0.8); /* Proziran crni ton */
+  backdrop-filter: blur(10px); /* Efekt zamućenja stakla */
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navContainer {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  color: white;
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 4px;
+}
+
+.logo span {
+  font-weight: 300;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  color: #888;
+}
+
+.navLinks {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.link {
+  color: #ccc;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+.link:hover, .active {
+  color: white;
+}
+
+.active::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #005288;
+}
+
+.themeToggle {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: transform 0.2s;
+}
+
+.themeToggle:hover {
+  transform: scale(1.1);
+}
+:root {
+  --bg-color: #ffffff;
+  --text-color: #1a1a1a;
+  --nav-bg: rgba(255, 255, 255, 0.8);
+}
+
+.dark-theme {
+  --bg-color: #000000;
+  --text-color: #ffffff;
+  --nav-bg: rgba(0, 0, 0, 0.8);
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}

@@ -1,44 +1,56 @@
-// src/pages/ShipDetails/ShipDetailsPage.tsx
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { fetchShipById } from '../../api/spacex';
-import type { Ship } from '../../types/spacex';
-import styles from './ShipDetails.module.css'; 
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { fetchShipById, fetchLaunchesByIds } from '../../api/spacex';
+import type { Ship, Launch } from '../../types/spacex';
+import styles from './ShipDetails.module.css';
 
 export const ShipDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   
   const [ship, setShip] = useState<Ship | null>(null);
+  const [launches, setLaunches] = useState<Launch[]>([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const getShipDetails = async () => {
-      if (!id) return; 
+    const getFullDetails = async () => {
+      if (!id) return;
       
       setLoading(true);
       try {
-        const data = await fetchShipById(id);
-        setShip(data);
+        const shipData = await fetchShipById(id);
+        setShip(shipData);
+
+        if (shipData.launches && shipData.launches.length > 0) {
+          const launchesData = await fetchLaunchesByIds(shipData.launches);
+          setLaunches(launchesData);
+        }
       } catch (error) {
-        console.error("Greška kod dohvata broda:", error);
+        console.error("Error fetching ship details:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    getShipDetails();
+    getFullDetails();
   }, [id]);
 
   if (loading) {
-    return <div className={styles.loader}>Učitavam detalje broda...</div>;
+    return (
+      <div className={styles.loaderContainer}>
+        <div className={styles.spinner}></div>
+        <p>Loading ship details...</p>
+      </div>
+    );
   }
 
   if (!ship) {
     return (
       <div className={styles.errorContainer}>
-        <h2>Brod nije pronađen.</h2>
-        <button onClick={() => navigate('/ships')}>Povratak na listu</button>
+        <h2>Ship not found</h2>
+        <button onClick={() => navigate('/ships')} className={styles.backBtn}>
+          Back to Fleet
+        </button>
       </div>
     );
   }
@@ -46,7 +58,7 @@ export const ShipDetails = () => {
   return (
     <div className={styles.container}>
       <button onClick={() => navigate(-1)} className={styles.backBtn}>
-        ← Natrag
+        ← Back
       </button>
 
       <div className={styles.content}>
@@ -57,7 +69,7 @@ export const ShipDetails = () => {
             className={styles.shipImage}
           />
           <span className={ship.active ? styles.statusActive : styles.statusInactive}>
-            {ship.active ? "Aktivan" : "Neaktivan"}
+            {ship.active ? "Active" : "Inactive"}
           </span>
         </div>
 
@@ -67,28 +79,32 @@ export const ShipDetails = () => {
           
           <div className={styles.stats}>
             <div className={styles.statItem}>
-              <strong>Matična luka:</strong> {ship.home_port}
+              <strong>Home Port:</strong> {ship.home_port}
             </div>
             <div className={styles.statItem}>
-              <strong>Godina izgradnje:</strong> {ship.year_built || 'Nepoznato'}
+              <strong>Year Built:</strong> {ship.year_built || 'Unknown'}
             </div>
             <div className={styles.statItem}>
-              <strong>Težina:</strong> {ship.weight_kg ? `${ship.weight_kg.toLocaleString()} kg` : 'N/A'}
+              <strong>Weight:</strong> {ship.weight_kg ? `${ship.weight_kg.toLocaleString()} kg` : 'N/A'}
             </div>
           </div>
 
-          <div className={styles.launches}>
-            <h3>Sudjelovao u misijama (ID-jevi lansiranja):</h3>
-            {ship.launches && ship.launches.length > 0 ? (
-              <ul>
-                {ship.launches.map((launchId: string) => (
-                  <li key={launchId} className={styles.launchId}>
-                    {launchId}
-                  </li>
+          <div className={styles.launchesSection}>
+            <h3>Participated in Missions</h3>
+            {launches.length > 0 ? (
+              <div className={styles.launchTags}>
+                {launches.map((launch) => (
+                  <Link 
+                    key={launch.id} 
+                    to={`/launch/${launch.id}`} 
+                    className={styles.launchTag}
+                  >
+                    {launch.name}
+                  </Link>
                 ))}
-              </ul>
+              </div>
             ) : (
-              <p>Ovaj brod još nije sudjelovao u zabilježenim misijama.</p>
+              <p className={styles.noData}>No mission history available for this vessel.</p>
             )}
           </div>
         </div>

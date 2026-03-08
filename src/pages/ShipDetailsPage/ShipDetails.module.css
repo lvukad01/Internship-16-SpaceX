@@ -132,8 +132,28 @@
   font-size: 1.5rem;
   font-weight: bold;
 }
+.launchTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
 
-/* Responsive dizajn */
+.launchTag {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #005288; 
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.launchTag:hover {
+    background-color: #003d66;
+    transform: translateY(-2px);
+}
 @media (max-width: 768px) {
   .content {
     grid-template-columns: 1fr;
