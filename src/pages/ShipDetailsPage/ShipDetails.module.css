@@ -1,13 +1,18 @@
 .container {
   max-width: 1000px;
-  margin: 40px auto;
-  padding: 0 20px;
+  margin: 0 auto;
+  padding: 100px 20px 40px 20px; /* Padding zbog Navbara */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  min-height: 100vh;
+  transition: all 0.3s ease;
 }
 
 .backBtn {
-  background: #f4f4f4;
-  border: none;
+  background: var(--card-bg);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
   padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
@@ -17,7 +22,7 @@
 }
 
 .backBtn:hover {
-  background: #e0e0e0;
+  background: var(--border-color);
   transform: translateX(-5px);
 }
 
@@ -25,10 +30,11 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 40px;
-  background: white;
+  background: var(--card-bg); /* OVO se mijenja */
+  border: 1px solid var(--border-color);
   border-radius: 15px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .imageWrapper {
@@ -56,13 +62,8 @@
   color: white;
 }
 
-.statusActive {
-  background: #27ae60;
-}
-
-.statusInactive {
-  background: #e74c3c;
-}
+.statusActive { background: #27ae60; }
+.statusInactive { background: #e74c3c; }
 
 .details {
   padding: 40px;
@@ -71,104 +72,70 @@
 .shipName {
   font-size: 2.5rem;
   margin: 0 0 5px 0;
-  color: #1a1a1a;
+  color: var(--text-main);
 }
 
 .type {
   font-size: 1.1rem;
-  color: #666;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 30px;
 }
 
-.stats {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 15px;
-  margin-bottom: 30px;
-}
-
 .statItem {
   font-size: 1.1rem;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-main);
 }
 
 .statItem strong {
-  color: #333;
-  width: 150px;
+  color: var(--text-main);
+  width: 120px;
   display: inline-block;
 }
 
-.launches h3 {
-  margin-bottom: 15px;
+.launchesSection h3 {
+  margin: 25px 0 15px 0;
   font-size: 1.3rem;
-  color: #1a1a1a;
+  color: var(--text-main);
 }
 
-.launches ul {
-  list-style: none;
-  padding: 0;
+.launchTags {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
 }
 
-.launchId {
-  background: #f0f2f5;
-  padding: 5px 12px;
-  border-radius: 5px;
-  font-family: monospace;
-  font-size: 0.9rem;
-  color: #555;
-}
-
-.loader {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 60vh;
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-.launchTags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 15px;
-}
-
 .launchTag {
-    display: inline-block;
-    padding: 8px 16px;
-    background-color: #005288; 
-    color: white;
-    text-decoration: none;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    transition: background 0.2s;
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #005288; 
+  color: white;
+  text-decoration: none;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  transition: all 0.2s;
 }
 
 .launchTag:hover {
-    background-color: #003d66;
-    transform: translateY(-2px);
+  background-color: #003d66;
+  transform: translateY(-2px);
 }
+
+.loaderContainer, .errorContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  color: var(--text-main);
+  background-color: var(--bg-primary);
+}
+
 @media (max-width: 768px) {
-  .content {
-    grid-template-columns: 1fr;
-  }
-  
-  .imageWrapper {
-    height: 300px;
-    min-height: auto;
-  }
-  
-  .details {
-    padding: 25px;
-  }
-  
-  .shipName {
-    font-size: 1.8rem;
-  }
+  .content { grid-template-columns: 1fr; }
+  .imageWrapper { height: 300px; }
+  .details { padding: 25px; }
 }

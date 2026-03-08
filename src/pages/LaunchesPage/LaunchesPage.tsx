@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { fetchLaunches } from '../../api/spacex';
 import type { Launch, QueryResponse } from '../../types/spacex';
-import styles from './Launches.module.css'; 
-import { Link } from 'react-router-dom';
+import { withLoading } from '../../hoc/withLoading';
+import styles from './Launches.module.css';
 
-export const LaunchesPage = () => {
+const LaunchesPageBase = () => {
   const [data, setData] = useState<QueryResponse<Launch> | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -21,10 +21,10 @@ export const LaunchesPage = () => {
     const getData = async () => {
       setLoading(true);
       try {
-        const result = await fetchLaunches(page, search,status);
+        const result = await fetchLaunches(page, search, status);
         setData(result);
       } catch (error) {
-        console.error("Greška:", error);
+        console.error(error);
       } finally {
         setLoading(false);
       }
@@ -72,52 +72,59 @@ export const LaunchesPage = () => {
         </select>
       </div>
 
-      {loading && !data ? (
-        <div>Loading...</div>
-      ) : (
-        <>
-        <div className={styles.launchesGrid}>
-          {data?.docs.map((launch) => (
-            <Link 
-              key={launch.id} 
-              to={`/launch/${launch.id}`} 
-              className={styles.cardLink} 
-            >
-              <div className={styles.card}>
-                <h3>{launch.name}</h3>
-                <p>Datum: {new Date(launch.date_utc).toLocaleDateString()}</p>
-                
-                <span className={`${styles.status} ${
-                  launch.upcoming ? styles.upcoming : launch.success ? styles.success : styles.failed
-                }`}>
-                  {launch.upcoming ? "Upcoming" : launch.success ? "Success" : "Failed"}
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
+      <div className={styles.launchesGrid}>
+        {data?.docs.map((launch) => (
+          <Link 
+            key={launch.id} 
+            to={`/launch/${launch.id}`} 
+            className={styles.cardLink} 
+          >
+            <div className={styles.card}>
+              <h3>{launch.name}</h3>
+              <p>Datum: {new Date(launch.date_utc).toLocaleDateString()}</p>
+              
+              <span className={`${styles.status} ${
+                launch.upcoming ? styles.upcoming : launch.success ? styles.success : styles.failed
+              }`}>
+                {launch.upcoming ? "Upcoming" : launch.success ? "Success" : "Failed"}
+              </span>
+            </div>
+          </Link>
+        ))}
+      </div>
 
-          <div className={styles.paginationControls}>
-            <button 
-              className={styles.paginationButton}
-              disabled={!data?.hasPrevPage || loading} 
-              onClick={() => setSearchParams({ search, status, page: (page - 1).toString() })}
-            >
-              Before
-            </button>
+      <div className={styles.paginationControls}>
+        <button 
+          className={styles.paginationButton}
+          disabled={!data?.hasPrevPage || loading} 
+          onClick={() => setSearchParams({ search, status, page: (page - 1).toString() })}
+        >
+          Before
+        </button>
 
-            <span>Page {data?.page} of {data?.totalPages}</span>
+        <span>Page {data?.page} of {data?.totalPages}</span>
 
-            <button 
-              className={styles.paginationButton}
-              disabled={!data?.hasNextPage || loading} 
-              onClick={() => setSearchParams({ search, status, page: (page + 1).toString() })}
-            >
-              Next
-            </button>
-          </div>
-        </>
-      )}
+        <button 
+          className={styles.paginationButton}
+          disabled={!data?.hasNextPage || loading} 
+          onClick={() => setSearchParams({ search, status, page: (page + 1).toString() })}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
-}
+};
+
+const PageWithHOC = withLoading(LaunchesPageBase);
+
+export const LaunchesPage = () => {
+  const [initialLoading, setInitialLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setInitialLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return <PageWithHOC isLoading={initialLoading} />;
+};

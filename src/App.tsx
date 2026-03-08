@@ -17,7 +17,7 @@ function App() {
         <main>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/launches" element={<LaunchesPage />} />
+            <Route path="/launches" element={<LaunchesPage isLoading={false} />} />
             <Route path="/launch/:id" element={<LaunchDetails />} />
             <Route path="/ships" element={<ShipsPage />} />
             <Route path="/ships/:id" element={<ShipDetails />} />
