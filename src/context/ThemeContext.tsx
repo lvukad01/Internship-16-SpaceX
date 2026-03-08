@@ -1,4 +1,19 @@
-import { createContext, useState, useContext, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useReducer, useEffect, type ReactNode } from 'react';
+
+interface ThemeState {
+  isDark: boolean;
+}
+
+type ThemeAction = { type: 'TOGGLE_THEME' };
+
+const themeReducer = (state: ThemeState, action: ThemeAction): ThemeState => {
+  switch (action.type) {
+    case 'TOGGLE_THEME':
+      return { isDark: !state.isDark };
+    default:
+      return state;
+  }
+};
 
 interface ThemeContextType {
   isDark: boolean;
@@ -8,30 +23,27 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [isDark, setIsDark] = useState(() => {
-    const saved = localStorage.getItem('theme');
-    return saved === 'dark' || saved === null;
+  const [state, dispatch] = useReducer(themeReducer, {
+    isDark: localStorage.getItem('theme') !== 'light'
   });
 
-  const toggleTheme = () => {
-    setIsDark(!isDark);
-  };
+  const toggleTheme = () => dispatch({ type: 'TOGGLE_THEME' });
 
   useEffect(() => {
-    const themeValue = isDark ? 'dark' : 'light';
+    const themeValue = state.isDark ? 'dark' : 'light';
     localStorage.setItem('theme', themeValue);
     
-    if (isDark) {
+    if (state.isDark) {
       document.body.classList.add('dark-theme');
       document.body.classList.remove('light-theme');
     } else {
       document.body.classList.add('light-theme');
       document.body.classList.remove('dark-theme');
     }
-  }, [isDark]);
+  }, [state.isDark]);
 
   return (
-    <ThemeContext.Provider value={{ isDark, toggleTheme }}>
+    <ThemeContext.Provider value={{ isDark: state.isDark, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
@@ -39,8 +51,6 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
 export const useTheme = () => {
   const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error("useTheme must be used within a ThemeProvider");
-  }
+  if (!context) throw new Error("useTheme must be used within a ThemeProvider");
   return context;
 };

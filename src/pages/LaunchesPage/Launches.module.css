@@ -2,6 +2,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  margin-top: 100px;
 }
 
 .searchSection {
@@ -31,6 +32,7 @@
 .launchesGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  margin-top: 50px;
   gap: 2rem;
   margin-bottom: 3rem;
 }
@@ -95,18 +97,29 @@
   margin-top: 2rem;
 }
 
+.launchesContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: var(--bg-primary);
+}
+
+.searchInput, .filterSelect {
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-main);
+}
+
 .paginationButton {
-  padding: 0.6rem 1.2rem;
-  border-radius: 6px;
-  border: none;
   background: #005288;
   color: white;
-  cursor: pointer;
 }
 
 .paginationButton:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+  background: var(--border-color);
+  color: var(--text-muted);
 }
 
 :global([data-theme='dark']) .card {
@@ -116,4 +129,16 @@
 
 :global([data-theme='dark']) .patchWrapper {
   background: #2a2a2a;
+}
+.launchesContainer {
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+}
+
+.searchInput, .filterSelect {
+  background-color: var(--card-bg);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  padding: 0.8rem;
+  border-radius: 8px;
 }

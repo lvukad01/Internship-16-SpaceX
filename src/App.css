@@ -1,83 +1,51 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+:root {
   --bg-primary: #ffffff;
-  --card-bg: #ffffff;        
+  --bg-secondary: #f8f9fa;
+  --card-bg: #ffffff;
   --text-main: #1a1a1a;
   --text-muted: #666666;
-  --border-color: #e1e4e8;  
+  --border-color: #e1e4e8;
+  --nav-bg: rgba(255, 255, 255, 0.9);
+  --accent: #005288;
 }
 
-:global(.dark-theme) {
-  --bg-primary: #0b0e11;     
-  --card-bg: #1c2128;     
+body.dark-theme {
+  --bg-primary: #0b0e11;
+  --bg-secondary: #15191d;
+  --card-bg: #1c2128;
   --text-main: #f0f6fc;
   --text-muted: #8b949e;
-  --border-color: #30363d; 
+  --border-color: #30363d;
+  --nav-bg: rgba(11, 14, 17, 0.9);
 }
 
 body {
-  background-color: var(--bg-primary);
-  color: var(--text-main);
-  transition: background-color 0.3s ease;
   margin: 0;
-}
-body {
+  padding: 0;
   background-color: var(--bg-primary);
   color: var(--text-main);
   transition: background-color 0.3s ease, color 0.3s ease;
-  margin: 0;
-}
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+#root {
+  width: 100%;
+  margin: 0 auto;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
 .navbar {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 70px;
-  background: rgba(0, 0, 0, 0.8); /* Proziran crni ton */
-  backdrop-filter: blur(10px); /* Efekt zamućenja stakla */
+  background: var(--nav-bg);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   z-index: 1000;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-color);
+  transition: background 0.3s ease;
 }
 
 .navContainer {
@@ -91,18 +59,11 @@ body {
 }
 
 .logo {
-  color: white;
+  color: var(--text-main);
   text-decoration: none;
   font-size: 1.5rem;
   font-weight: 900;
   letter-spacing: 4px;
-}
-
-.logo span {
-  font-weight: 300;
-  font-size: 0.9rem;
-  letter-spacing: 2px;
-  color: #888;
 }
 
 .navLinks {
@@ -112,17 +73,16 @@ body {
 }
 
 .link {
-  color: #ccc;
+  color: var(--text-muted);
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 600;
   text-transform: uppercase;
   transition: color 0.3s ease;
-  position: relative;
 }
 
 .link:hover, .active {
-  color: white;
+  color: var(--text-main);
 }
 
 .active::after {
@@ -132,13 +92,13 @@ body {
   left: 0;
   width: 100%;
   height: 2px;
-  background-color: #005288;
+  background-color: var(--accent);
 }
 
 .themeToggle {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--border-color);
   border: none;
-  color: white;
+  color: var(--text-main);
   padding: 8px;
   border-radius: 50%;
   cursor: pointer;
@@ -149,20 +109,12 @@ body {
 .themeToggle:hover {
   transform: scale(1.1);
 }
-:root {
-  --bg-color: #ffffff;
-  --text-color: #1a1a1a;
-  --nav-bg: rgba(255, 255, 255, 0.8);
-}
 
-.dark-theme {
-  --bg-color: #000000;
-  --text-color: #ffffff;
-  --nav-bg: rgba(0, 0, 0, 0.8);
+.card {
+  background-color: var(--card-bg);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
 }
-
-body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  transition: background-color 0.3s ease, color 0.3s ease;
+main{
+  margin-top: 50px;
 }
